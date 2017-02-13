@@ -4,7 +4,7 @@
 
 ### This version is aimed to combine all time-reducing techiniques together
 
-### Time Consumed: 1 loop, best of 3: 30.9 s per loop
+### Time Consumed: 1 loop, best of 3: 29.9 s per loop
 ### Relative Speeup(R): 1 min 41s / 29.9s =3.38
 
 
