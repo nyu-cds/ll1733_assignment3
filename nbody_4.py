@@ -2,9 +2,13 @@
     N-body simulation.
 """
 
-### This version is the original version
+### This version is aimed to use data aggregation
 
-### Time Consumed: 1 loop, best of 3: 1min 41s per loop
+### Time Consumed: 1 loop, best of 3: 1min 34s per loop
+### Relative Speeup(R): 1 min 41s / 1min 31s per loop =1.11
+
+import itertools
+
 PI = 3.14159265358979323
 SOLAR_MASS = 4 * PI * PI
 DAYS_PER_YEAR = 365.24
@@ -72,14 +76,16 @@ def advance(dt):
         advance the system one timestep
     '''
     seenit = []
-    for body1 in BODIES.keys():
-        for body2 in BODIES.keys():
-            if (body1 != body2) and not (body2 in seenit):
-                ([x1, y1, z1], v1, m1) = BODIES[body1]
-                ([x2, y2, z2], v2, m2) = BODIES[body2]
-                (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
-                update_vs(v1, v2, dt, dx, dy, dz, m1, m2)
-                seenit.append(body1)
+
+    BodyNested=itertools.combinations(BODIES,2)
+
+    for b1,b2 in BodyNested:
+
+        ([x1, y1, z1], v1, m1) = BODIES[b1]
+        ([x2, y2, z2], v2, m2) = BODIES[b2]
+        (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
+        update_vs(v1, v2, dt, dx, dy, dz, m1, m2)
+        
         
     for body in BODIES.keys():
         (r, [vx, vy, vz], m) = BODIES[body]
@@ -93,15 +99,17 @@ def report_energy(e=0.0):
         compute the energy and return it so that it can be printed
     '''
     seenit = []
-    for body1 in BODIES.keys():
-        for body2 in BODIES.keys():
-            if (body1 != body2) and not (body2 in seenit):
-                ((x1, y1, z1), v1, m1) = BODIES[body1]
-                ((x2, y2, z2), v2, m2) = BODIES[body2]
-                (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
-                e -= compute_energy(m1, m2, dx, dy, dz)
-                seenit.append(body1)
-        
+
+    BodyNested=itertools.combinations(BODIES,2)
+
+    for b1,b2 in BodyNested:
+       
+        ([x1, y1, z1], v1, m1) = BODIES[b1]
+        ([x2, y2, z2], v2, m2) = BODIES[b2]
+        (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
+        e -= compute_energy(m1, m2, dx, dy, dz)
+
+       
     for body in BODIES.keys():
         (r, [vx, vy, vz], m) = BODIES[body]
         e += m * (vx * vx + vy * vy + vz * vz) / 2.
@@ -144,9 +152,7 @@ def nbody(loops, reference, iterations):
 
 
 if __name__ == '__main__':
-    import timeit
-    print (timeit.timeit("nbody(100, 'sun', 20000)", setup='from __main__ import nbody', number=1))
- #   nbody(100, 'sun', 20000)
+    nbody(100, 'sun', 20000)
     
     
 

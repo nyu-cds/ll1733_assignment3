@@ -2,9 +2,11 @@
     N-body simulation.
 """
 
-### This version is the original version
+### This version is aimed to reduce function call overhead
 
-### Time Consumed: 1 loop, best of 3: 1min 41s per loop
+### Time Consumed: 1 loop, best of 3: 41.8 s per loop
+### Relative Speeup(R): 1 min 41s / 30.9s =2.42
+
 PI = 3.14159265358979323
 SOLAR_MASS = 4 * PI * PI
 DAYS_PER_YEAR = 365.24
@@ -43,29 +45,29 @@ BODIES = {
                  1.62824170038242295e-03 * DAYS_PER_YEAR,
                  -9.51592254519715870e-05 * DAYS_PER_YEAR],
                 5.15138902046611451e-05 * SOLAR_MASS)}
-
-def compute_deltas(x1, x2, y1, y2, z1, z2):
-    return (x1-x2, y1-y2, z1-z2)
-    
-def compute_b(m, dt, dx, dy, dz):
-    mag = compute_mag(dt, dx, dy, dz)
-    return m * mag
-
-def compute_mag(dt, dx, dy, dz):
-    return dt * ((dx * dx + dy * dy + dz * dz) ** (-1.5))
-
-def update_vs(v1, v2, dt, dx, dy, dz, m1, m2):
-    v1[0] -= dx * compute_b(m2, dt, dx, dy, dz)
-    v1[1] -= dy * compute_b(m2, dt, dx, dy, dz)
-    v1[2] -= dz * compute_b(m2, dt, dx, dy, dz)
-    v2[0] += dx * compute_b(m1, dt, dx, dy, dz)
-    v2[1] += dy * compute_b(m1, dt, dx, dy, dz)
-    v2[2] += dz * compute_b(m1, dt, dx, dy, dz)
-
-def update_rs(r, dt, vx, vy, vz):
-    r[0] += dt * vx
-    r[1] += dt * vy
-    r[2] += dt * vz
+##
+##def compute_deltas(x1, x2, y1, y2, z1, z2):
+##    return (x1-x2, y1-y2, z1-z2)
+##    
+##def compute_b(m, dt, dx, dy, dz):
+##    mag = compute_mag(dt, dx, dy, dz)
+##    return m * mag
+##
+##def compute_mag(dt, dx, dy, dz):
+##    return dt * ((dx * dx + dy * dy + dz * dz) ** (-1.5))
+##
+##def update_vs(v1, v2, dt, dx, dy, dz, m1, m2):
+##    v1[0] -= dx * compute_b(m2, dt, dx, dy, dz)
+##    v1[1] -= dy * compute_b(m2, dt, dx, dy, dz)
+##    v1[2] -= dz * compute_b(m2, dt, dx, dy, dz)
+##    v2[0] += dx * compute_b(m1, dt, dx, dy, dz)
+##    v2[1] += dy * compute_b(m1, dt, dx, dy, dz)
+##    v2[2] += dz * compute_b(m1, dt, dx, dy, dz)
+##
+##def update_rs(r, dt, vx, vy, vz):
+##    r[0] += dt * vx
+##    r[1] += dt * vy
+##    r[2] += dt * vz
 
 def advance(dt):
     '''
@@ -77,17 +79,38 @@ def advance(dt):
             if (body1 != body2) and not (body2 in seenit):
                 ([x1, y1, z1], v1, m1) = BODIES[body1]
                 ([x2, y2, z2], v2, m2) = BODIES[body2]
-                (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
-                update_vs(v1, v2, dt, dx, dy, dz, m1, m2)
+
+                dx,dy,dz=(x1-x2, y1-y2, z1-z2)##substitute of compute_deltas
+                 
+###                (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
+
+                ##substitute of update_vs##
+                mag=dt * ((dx * dx + dy * dy + dz * dz) ** (-1.5))
+                computeB2=m2*mag
+                computeB1=m1*mag
+                v1[0]-=dx*computeB2
+                v1[1]-=dy*computeB2
+                v1[2]-=dz*computeB2
+                v2[0]+=dx*computeB1
+                v2[1]+=dy*computeB1
+                v2[2]+=dz*computeB1
+                ##substitute of update_vs##
+                 
+ #               update_vs(v1, v2, dt, dx, dy, dz, m1, m2)
                 seenit.append(body1)
         
     for body in BODIES.keys():
         (r, [vx, vy, vz], m) = BODIES[body]
-        update_rs(r, dt, vx, vy, vz)
+        ###substitute of update_rs
+        r[0] += dt * vx
+        r[1] += dt * vy
+        r[2] += dt * vz
+        ###substitute of update_Rs
+#        update_rs(r, dt, vx, vy, vz)
 
-def compute_energy(m1, m2, dx, dy, dz):
-    return (m1 * m2) / ((dx * dx + dy * dy + dz * dz) ** 0.5)
-    
+##def compute_energy(m1, m2, dx, dy, dz):
+##    return (m1 * m2) / ((dx * dx + dy * dy + dz * dz) ** 0.5)
+##    
 def report_energy(e=0.0):
     '''
         compute the energy and return it so that it can be printed
@@ -98,8 +121,12 @@ def report_energy(e=0.0):
             if (body1 != body2) and not (body2 in seenit):
                 ((x1, y1, z1), v1, m1) = BODIES[body1]
                 ((x2, y2, z2), v2, m2) = BODIES[body2]
-                (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
-                e -= compute_energy(m1, m2, dx, dy, dz)
+
+                (dx,dy,dz)=(x1-x2, y1-y2, z1-z2) ###substitute of compute_deltas
+ ###               (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
+
+                e-=(m1 * m2) / ((dx * dx + dy * dy + dz * dz) ** 0.5)##substitute of compute_energy
+ ##               e -= compute_energy(m1, m2, dx, dy, dz)
                 seenit.append(body1)
         
     for body in BODIES.keys():
@@ -144,9 +171,4 @@ def nbody(loops, reference, iterations):
 
 
 if __name__ == '__main__':
-    import timeit
-    print (timeit.timeit("nbody(100, 'sun', 20000)", setup='from __main__ import nbody', number=1))
- #   nbody(100, 'sun', 20000)
-    
-    
-
+    nbody(100, 'sun', 20000)

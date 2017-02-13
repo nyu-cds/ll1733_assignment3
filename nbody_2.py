@@ -2,9 +2,11 @@
     N-body simulation.
 """
 
-### This version is the original version
+### This version is aimed to use alternatives to membership testing of lists
 
-### Time Consumed: 1 loop, best of 3: 1min 41s per loop
+### Time Consumed: 1 loop, best of 3: 1min 38s per loop
+### Relative Speeup(R): 1 min 41s / 1 min 38s =1.03
+
 PI = 3.14159265358979323
 SOLAR_MASS = 4 * PI * PI
 DAYS_PER_YEAR = 365.24
@@ -71,7 +73,9 @@ def advance(dt):
     '''
         advance the system one timestep
     '''
-    seenit = []
+
+    seenit=set()  ##use set for faster membership testing
+ #  seenit = []
     for body1 in BODIES.keys():
         for body2 in BODIES.keys():
             if (body1 != body2) and not (body2 in seenit):
@@ -79,7 +83,8 @@ def advance(dt):
                 ([x2, y2, z2], v2, m2) = BODIES[body2]
                 (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
                 update_vs(v1, v2, dt, dx, dy, dz, m1, m2)
-                seenit.append(body1)
+                seenit.add(body1)
+ #               seenit.append(body1)
         
     for body in BODIES.keys():
         (r, [vx, vy, vz], m) = BODIES[body]
@@ -92,7 +97,8 @@ def report_energy(e=0.0):
     '''
         compute the energy and return it so that it can be printed
     '''
-    seenit = []
+    seenit=set()  ##use set for faster membership testing
+ #   seenit = []
     for body1 in BODIES.keys():
         for body2 in BODIES.keys():
             if (body1 != body2) and not (body2 in seenit):
@@ -100,7 +106,8 @@ def report_energy(e=0.0):
                 ((x2, y2, z2), v2, m2) = BODIES[body2]
                 (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
                 e -= compute_energy(m1, m2, dx, dy, dz)
-                seenit.append(body1)
+                seenit.add(body1)
+ #               seenit.append(body1)
         
     for body in BODIES.keys():
         (r, [vx, vy, vz], m) = BODIES[body]
@@ -144,9 +151,7 @@ def nbody(loops, reference, iterations):
 
 
 if __name__ == '__main__':
-    import timeit
-    print (timeit.timeit("nbody(100, 'sun', 20000)", setup='from __main__ import nbody', number=1))
- #   nbody(100, 'sun', 20000)
+    nbody(100, 'sun', 20000)
     
     
 
