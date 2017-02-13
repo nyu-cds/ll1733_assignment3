@@ -5,7 +5,7 @@
 ### This version is aimed to reduce function call overhead
 
 ### Time Consumed: 1 loop, best of 3: 41.8 s per loop
-### Relative Speeup(R): 1 min 41s / 30.9s =2.42
+### Relative Speeup(R): 1 min 41s / 41.8s =2.42
 
 PI = 3.14159265358979323
 SOLAR_MASS = 4 * PI * PI
