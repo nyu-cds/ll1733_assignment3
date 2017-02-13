@@ -6,6 +6,7 @@
 
 ### Time Consumed: 1 loop, best of 3: 1min 39s per loop
 ### Relative Speeup(R): 1 min 41s / 1 min 39s =1.02
+### This change makes the fourth most improvement.
 
 
 def compute_deltas(x1, x2, y1, y2, z1, z2):

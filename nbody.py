@@ -5,6 +5,7 @@
 ### This version is the original version
 
 ### Time Consumed: 1 loop, best of 3: 1min 41s per loop
+
 PI = 3.14159265358979323
 SOLAR_MASS = 4 * PI * PI
 DAYS_PER_YEAR = 365.24

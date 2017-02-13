@@ -6,6 +6,7 @@
 
 ### Time Consumed: 1 loop, best of 3: 1min 31s per loop
 ### Relative Speeup(R): 1 min 41s / 1min 31s per loop =1.11
+### This change makes the second most improvement.
 
 import itertools
 
