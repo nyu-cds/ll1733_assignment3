@@ -144,9 +144,7 @@ def nbody(loops, reference, iterations):
 
 
 if __name__ == '__main__':
-    import timeit
-    print (timeit.timeit("nbody(100, 'sun', 20000)", setup='from __main__ import nbody', number=1))
- #   nbody(100, 'sun', 20000)
+    nbody(100, 'sun', 20000)
     
     
 
