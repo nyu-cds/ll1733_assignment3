@@ -8,35 +8,35 @@
 ### Relative Speeup(R): 1 min 41s / 29.9s =3.38
 import itertools
 
-def advance(Body,BodyNested,dt):
+def advance(Body,BodyNested,dt,timesOfIterations):
     '''
         advance the system one timestep
     '''
 
-    for b1, b2 in BodyNested:
+    for i in range(timesOfIterations):
+        for b1, b2 in BodyNested:
         
         
-        ([x1, y1, z1], v1, m1) = Body[b1]
-        ([x2, y2, z2], v2, m2) = Body[b2]
-        dx,dy,dz=(x1-x2, y1-y2, z1-z2)
+            ([x1, y1, z1], v1, m1) = Body[b1]
+            ([x2, y2, z2], v2, m2) = Body[b2]
+            dx,dy,dz=(x1-x2, y1-y2, z1-z2)
                  
-        mag=dt * ((dx * dx + dy * dy + dz * dz) ** (-1.5))
-        computeB2=m2*mag
-        computeB1=m1*mag
-        v1[0]-=dx*computeB2
-        v1[1]-=dy*computeB2
-        v1[2]-=dz*computeB2
-        v2[0]+=dx*computeB1
-        v2[1]+=dy*computeB1
-        v2[2]+=dz*computeB1
+            mag=dt * ((dx * dx + dy * dy + dz * dz) ** (-1.5))
+            computeB2=m2*mag
+            computeB1=m1*mag
+            v1[0]-=dx*computeB2
+            v1[1]-=dy*computeB2
+            v1[2]-=dz*computeB2
+            v2[0]+=dx*computeB1
+            v2[1]+=dy*computeB1
+            v2[2]+=dz*computeB1
     
-      
-    for body in Body.keys():
-        (r, [vx, vy, vz], m) = Body[body]
+        for body in Body.keys():
+            (r, [vx, vy, vz], m) = Body[body]
 
-        r[0] += dt * vx
-        r[1] += dt * vy
-        r[2] += dt * vz
+            r[0] += dt * vx
+            r[1] += dt * vy
+            r[2] += dt * vz
    
 def report_energy(Body,BodyNested,e=0.0):
     '''
@@ -130,8 +130,7 @@ def nbody(loops, reference, iterations):
 
     for _ in range(loops):
         report_energy(Body,BodyNested,0.0)
-        for _ in range(iterations):
-            advance(Body,BodyNested,0.01)
+        advance(Body,BodyNested,0.01,iterations)
         print(report_energy(Body,BodyNested,0.0))
 
 
