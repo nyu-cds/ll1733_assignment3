@@ -8,29 +8,6 @@
 ### Relative Speeup(R): 1 min 41s / 29.9s =3.38
 
 
-##def compute_deltas(x1, x2, y1, y2, z1, z2):
-##    return (x1-x2, y1-y2, z1-z2)
-##    
-##def compute_b(m, dt, dx, dy, dz):
-##    mag = compute_mag(dt, dx, dy, dz)
-##    return m * mag
-
-##def compute_mag(dt, dx, dy, dz):
-##    return dt * ((dx * dx + dy * dy + dz * dz) ** (-1.5))
-
-##def update_vs(v1, v2, dt, dx, dy, dz, m1, m2):
-##    v1[0] -= dx * compute_b(m2, dt, dx, dy, dz)
-##    v1[1] -= dy * compute_b(m2, dt, dx, dy, dz)
-##    v1[2] -= dz * compute_b(m2, dt, dx, dy, dz)
-##    v2[0] += dx * compute_b(m1, dt, dx, dy, dz)
-##    v2[1] += dy * compute_b(m1, dt, dx, dy, dz)
-##    v2[2] += dz * compute_b(m1, dt, dx, dy, dz)
-
-##def update_rs(r, dt, vx, vy, vz):
-##    r[0] += dt * vx
-##    r[1] += dt * vy
-##    r[2] += dt * vz
-
 def advance(Body,BodyNested,dt):
     '''
         advance the system one timestep
@@ -41,11 +18,8 @@ def advance(Body,BodyNested,dt):
         
         ([x1, y1, z1], v1, m1) = Body[b1]
         ([x2, y2, z2], v2, m2) = Body[b2]
-        dx,dy,dz=(x1-x2, y1-y2, z1-z2)##substitute of compute_deltas
+        dx,dy,dz=(x1-x2, y1-y2, z1-z2)
                  
-###                (dx, dy, dz) = compute_deltas(x1, x2, y1, y2, z1, z2)
-
-                ##substitute of update_vs##
         mag=dt * ((dx * dx + dy * dy + dz * dz) ** (-1.5))
         computeB2=m2*mag
         computeB1=m1*mag
@@ -55,23 +29,15 @@ def advance(Body,BodyNested,dt):
         v2[0]+=dx*computeB1
         v2[1]+=dy*computeB1
         v2[2]+=dz*computeB1
-                ##substitute of update_vs##
-                 
- #               update_vs(v1, v2, dt, dx, dy, dz, m1, m2)
-       
+    
+      
     for body in Body.keys():
         (r, [vx, vy, vz], m) = Body[body]
 
-        ###substitute of update_rs
         r[0] += dt * vx
         r[1] += dt * vy
         r[2] += dt * vz
-        ###substitute of update_Rs
-#        update_rs(r, dt, vx, vy, vz)
-
-##def compute_energy(m1, m2, dx, dy, dz):
-##    return (m1 * m2) / ((dx * dx + dy * dy + dz * dz) ** 0.5)
-##    
+   
 def report_energy(Body,BodyNested,e=0.0):
     '''
         compute the energy and return it so that it can be printed
@@ -81,9 +47,9 @@ def report_energy(Body,BodyNested,e=0.0):
 
         ((x1, y1, z1), v1, m1) = Body[b1]
         ((x2, y2, z2), v2, m2) = Body[b2]
-        (dx, dy, dz) =(x1-x2, y1-y2, z1-z2)  ##substitute of compute_deltas
-        e-=(m1 * m2) / ((dx * dx + dy * dy + dz * dz) ** 0.5)##substitute of compute_energy
- ##               e -= compute_energy(m1, m2, dx, dy, dz)
+        (dx, dy, dz) =(x1-x2, y1-y2, z1-z2) 
+        e-=(m1 * m2) / ((dx * dx + dy * dy + dz * dz) ** 0.5)
+
 
         
     for body in Body.keys():
