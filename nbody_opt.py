@@ -6,7 +6,7 @@
 
 ### Time Consumed: 1 loop, best of 3: 29.9 s per loop
 ### Relative Speeup(R): 1 min 41s / 29.9s =3.38
-
+import itertools
 
 def advance(Body,BodyNested,dt):
     '''
@@ -76,7 +76,7 @@ def offset_momentum(Body,ref, px=0.0, py=0.0, pz=0.0):
 
 
 def nbody(loops, reference, iterations):
-    import itertools
+    
     '''
         nbody simulation
         loops - number of loops to run
