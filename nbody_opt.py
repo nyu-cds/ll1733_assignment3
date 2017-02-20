@@ -6,7 +6,9 @@
 
 ### Time Consumed: 1 loop, best of 3: 29.9 s per loop
 ### Relative Speeup(R): 1 min 41s / 29.9s =3.38
-import itertools
+
+from itertools import combinations
+
 
 def advance(Body,BodyNested,dt,timesOfIterations):
     '''
@@ -124,7 +126,7 @@ def nbody(loops, reference, iterations):
                  -9.51592254519715870e-05 * DAYS_PER_YEAR],
                 5.15138902046611451e-05 * SOLAR_MASS)}
 
-    BodyNested=list(itertools.combinations(Body,2))
+    BodyNested=list(combinations(Body,2))
     
     offset_momentum(Body,Body[reference])
 
