@@ -1,21 +1,24 @@
 """
-    N-body simulation.
+    N-body cython simulation.
 """
 
 ### This version is aimed to combine all time-reducing techiniques together
 
-### Time Consumed: 1 loop, best of 3: 29.9 s per loop
-### Relative Speeup(R): 1 min 41s / 29.9s =3.38
+### Time Consumed: 1 loop, best of 3: 6.5 s per loop
+### Relative Speeup(R): 29.9s / 6.5s =4.6
 
 from itertools import combinations
 
-
-def advance(Body,BodyNested,dt,timesOfIterations):
+def advance(dict Body,list BodyNested,float dt,int timesOfIterations):
     '''
         advance the system one timestep
     '''
-
     
+    cdef int i
+    cdef str b1,b2,body
+    cdef float x1,y1,z1,x2,y2,z2,m1,m2,dx,dy,dz,mag,computeB1,computeB2,vx,vy,vz,m
+    
+    cdef list v1,v2,r
     for i in range(timesOfIterations):
         for b1, b2 in BodyNested:
         
@@ -41,11 +44,15 @@ def advance(Body,BodyNested,dt,timesOfIterations):
             r[1] += dt * vy
             r[2] += dt * vz
    
-def report_energy(Body,BodyNested,e=0.0):
+def report_energy(dict Body,list BodyNested,float e=0.0):
     '''
         compute the energy and return it so that it can be printed
     '''
    
+    cdef str b1,b2,body
+    cdef float x1,y1,z1,x2,y2,z2,m1,m2,dx,dy,dz,vx,vy,vz,m
+    cdef list v1,v2,r
+    
     for b1,b2 in BodyNested:
 
         ((x1, y1, z1), v1, m1) = Body[b1]
@@ -61,11 +68,15 @@ def report_energy(Body,BodyNested,e=0.0):
         
     return e
 
-def offset_momentum(Body,ref, px=0.0, py=0.0, pz=0.0):
+def offset_momentum(dict Body,tuple ref, float px=0.0, float py=0.0, float pz=0.0):
     '''
         ref is the body in the center of the system
         offset values from this reference
-    '''   
+    '''
+    cdef str body
+    cdef list r,v
+    cdef float vx,vy,vz,m
+    
     for body in Body.keys():
         (r, [vx, vy, vz], m) = Body[body]
         px -= vx * m
@@ -78,7 +89,7 @@ def offset_momentum(Body,ref, px=0.0, py=0.0, pz=0.0):
     v[2] = pz / m
 
 
-def nbody(loops, reference, iterations):
+def nbody(int loops, str reference, int iterations):
     
     '''
         nbody simulation
@@ -87,12 +98,15 @@ def nbody(loops, reference, iterations):
         iterations - number of timesteps to advance
     '''
     # Set up global state
-
+    
+    cdef int _
+    cdef float PI,SOLAR_MASS,DAYS_PER_YEAR
+    
     PI = 3.14159265358979323
     SOLAR_MASS = 4 * PI * PI
     DAYS_PER_YEAR = 365.24
 
-    Body = {
+    cdef dict Body = {
     'sun': ([0.0, 0.0, 0.0], [0.0, 0.0, 0.0], SOLAR_MASS),
 
     'jupiter': ([4.84143144246472090e+00,
@@ -127,9 +141,10 @@ def nbody(loops, reference, iterations):
                  -9.51592254519715870e-05 * DAYS_PER_YEAR],
                 5.15138902046611451e-05 * SOLAR_MASS)}
 
-    BodyNested=list(combinations(Body,2))
+    cdef list BodyNested=list(combinations(Body,2))
     
     offset_momentum(Body,Body[reference])
+
 
     for _ in range(loops):
         report_energy(Body,BodyNested,0.0)
