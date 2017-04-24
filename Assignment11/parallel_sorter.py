@@ -35,6 +35,6 @@ def parallelSort(l):
 if __name__ == '__main__':
     l=[]
     if rank==0:
-        l=numpy.random.randint(0,100,size=100)##generate random data
+        l=numpy.random.randint(0,10000,size=10000)##generate random data
         print ("list is ", l)
     parallelSort(l)
